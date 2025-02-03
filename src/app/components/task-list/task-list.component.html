@@ -1,0 +1,102 @@
+
+<div class="container mt-4">
+  <!-- Form Card -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h5 class="card-title mb-0">
+        <i class="bi {{ editMode ? 'bi-pencil' : 'bi-plus-circle' }} me-2"></i>
+        {{ editMode ? 'Editar Tarea' : 'Nueva Tarea' }}
+      </h5>
+    </div>
+    <div class="card-body">
+      <form #taskForm="ngForm" (ngSubmit)="onSubmit()">
+        <!-- Título -->
+        <div class="mb-3">
+          <label for="title" class="form-label">Título</label>
+          <input type="text"
+                 class="form-control"
+                 id="title"
+                 name="title"
+                 [(ngModel)]="newTask.title"
+                 required
+                 #title="ngModel"
+                 [ngClass]="{ 'is-invalid': title.invalid && (title.dirty || title.touched) }">
+          <div class="invalid-feedback">
+            El título es requerido
+          </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="mb-3">
+          <label for="description" class="form-label">Descripción</label>
+          <textarea class="form-control"
+                    id="description"
+                    name="description"
+                    rows="3"
+                    [(ngModel)]="newTask.description">
+          </textarea>
+        </div>
+
+        <!-- Estado -->
+        <div class="mb-3">
+          <div class="form-check">
+            <input type="checkbox"
+                   class="form-check-input"
+                   id="isComplete"
+                   name="isComplete"
+                   [(ngModel)]="newTask.isComplete">
+            <label class="form-check-label" for="isComplete">
+              Tarea Completada
+            </label>
+          </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-end gap-2">
+          <button *ngIf="editMode"
+                  type="button"
+                  class="btn btn-secondary"
+                  (click)="cancelEdit()">
+            <i class="bi bi-x-circle me-1"></i>
+            Cancelar
+          </button>
+          <button type="submit"
+                  class="btn btn-primary"
+                  [disabled]="taskForm.invalid">
+            <i class="bi {{ editMode ? 'bi-save' : 'bi-plus-circle' }} me-1"></i>
+            {{ editMode ? 'Actualizar' : 'Agregar' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Lista de Tareas -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="list-group">
+        <div *ngFor="let task of tasks" class="list-group-item">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="mb-1">{{task.title}}</h6>
+              <p class="text-muted small mb-0">{{task.description}}</p>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-sm"
+                      [ngClass]="task.isComplete ? 'btn-success' : 'btn-secondary'"
+                      (click)="toggleStatus(task)">
+                <i class="bi" [ngClass]="task.isComplete ? 'bi-check-circle' : 'bi-circle'"></i>
+              </button>
+              <button class="btn btn-sm btn-warning" (click)="editTask(task)">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-sm btn-danger" (click)="deleteTask(task.id)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

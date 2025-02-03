@@ -1,1 +1,42 @@
-/* You can add global styles to this file, and also import other style files */
+
+
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+body {
+  background-color: #f8f9fa;
+}
+
+// Navbar Styles
+.navbar {
+  box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+// Form Controls
+.form-control {
+  &:focus {
+    box-shadow: none;
+    border-color: #80bdff;
+  }
+}
+
+// Buttons
+.btn {
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+}
+
+// Transitions
+.list-group-item,
+.btn,
+.form-control {
+  transition: all 0.2s ease-in-out;
+}
+
+// Card shadows
+.shadow-sm {
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
+}
+
+.shadow-lg {
+  box-shadow: 0 1rem 3rem rgba(0,0,0,.175) !important;
+}

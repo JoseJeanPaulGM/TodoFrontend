@@ -1,0 +1,41 @@
+
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+
+
+.card {
+  border: none;
+  border-radius: 8px;
+  
+  .card-header {
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+  }
+}
+
+.list-group-item {
+  margin-bottom: 0.5rem;
+  border: 1px solid rgba(0,0,0,.125);
+  border-radius: 6px !important;
+  
+  &:hover {
+    background-color: #f8f9fa;
+  }
+}
+
+.btn-group {
+  .btn {
+    margin: 0 2px;
+    
+    &:hover {
+      transform: translateY(-1px);
+    }
+  }
+}
+
+.form-control {
+  &:focus {
+    box-shadow: none;
+    border-color: #80bdff;
+  }
+}
