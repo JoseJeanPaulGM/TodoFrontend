@@ -1,41 +1,68 @@
-
 @import 'bootstrap/dist/css/bootstrap.min.css';
 
+// Variables
+$card-shadow: rgba(0, 0, 0, 0.1);
+$hover-transition: 0.2s;
 
-
+// Mejoras para las cards
 .card {
   border: none;
   border-radius: 8px;
+  box-shadow: 0 2px 8px $card-shadow;
+  transition: all $hover-transition ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px $card-shadow;
+  }
   
   .card-header {
     border-bottom: none;
     border-radius: 8px 8px 0 0;
-  }
-}
-
-.list-group-item {
-  margin-bottom: 0.5rem;
-  border: 1px solid rgba(0,0,0,.125);
-  border-radius: 6px !important;
-  
-  &:hover {
     background-color: #f8f9fa;
   }
 }
 
+// Mejoras para los items de la lista
+.list-group-item {
+  margin-bottom: 0.5rem;
+  border: 1px solid rgba(0,0,0,.125);
+  border-radius: 6px !important;
+  transition: all $hover-transition ease;
+  
+  &:hover {
+    background-color: #f8f9fa;
+    transform: translateX(3px);
+  }
+}
+
+// Mejoras para los botones
 .btn-group {
   .btn {
     margin: 0 2px;
+    transition: all $hover-transition ease;
     
     &:hover {
       transform: translateY(-1px);
+      box-shadow: 0 2px 4px $card-shadow;
+    }
+    
+    &:active {
+      transform: translateY(0);
     }
   }
 }
 
+// Mejoras para los inputs
 .form-control {
+  transition: all $hover-transition ease;
+  
   &:focus {
     box-shadow: none;
     border-color: #80bdff;
+    transform: translateY(-1px);
+  }
+  
+  &:hover {
+    border-color: #90c2ff;
   }
 }
