@@ -2,12 +2,9 @@
 import { Component, OnInit } from '@angular/core';
 import { TaskService } from '../../services/task.service';
 import { Task } from '../../models/task.model';
+import { PagedResponse } from '../../models/PagedResponse';
 import Swal from 'sweetalert2';
 
-/**
- * Componente para la gestión de tareas
- * Permite crear, editar, eliminar y cambiar estado de tareas
- */
 @Component({
   selector: 'app-task-list',
   templateUrl: './task-list.component.html',
@@ -16,6 +13,12 @@ import Swal from 'sweetalert2';
 export class TaskListComponent implements OnInit {
   // Almacena la lista de tareas
   tasks: Task[] = [];
+  
+  // Información de paginación
+  paginationInfo: PagedResponse<Task> | null = null;
+  currentPage = 1;
+  pageSize = 10;
+  Math = Math;
 
   // Modelo para nueva tarea o tarea en edición
   newTask: Task = {
@@ -27,30 +30,43 @@ export class TaskListComponent implements OnInit {
 
   // Control del modo edición
   editMode = false;
-  // ID de la tarea en edición
   editingId = 0;
 
-  /**
-   * Constructor del componente
-   * @param taskService Servicio para operaciones CRUD de tareas
-   */
   constructor(private taskService: TaskService) {}
 
-  /**
-   * Inicialización del componente
-   * Carga las tareas al inicio
-   */
   ngOnInit() {
     this.loadTasks(true);
   }
 
-  /**
-   * Valida el formulario de tarea
-   * Verifica título y descripción
-   * @returns boolean - true si el formulario es válido
-   */
+  // Métodos de paginación
+  goToPage(page: number): void {
+    this.currentPage = page;
+    this.loadTasks(false);
+  }
+
+  calcularFin(): number {
+    if (this.paginationInfo) {
+      return Math.min(this.currentPage * this.pageSize, this.paginationInfo.totalCount);
+    }
+    return 0;
+  }
+
+  previousPage(): void {
+    if (this.paginationInfo?.hasPrevious) {
+      this.currentPage--;
+      this.loadTasks(false);
+    }
+  }
+
+  nextPage(): void {
+    if (this.paginationInfo?.hasNext) {
+      this.currentPage++;
+      this.loadTasks(false);
+    }
+  }
+
   validateForm(): boolean {
-    // Validación del título
+    // [código existente sin cambios]
     if (!this.newTask.title || this.newTask.title.trim() === '') {
       Swal.fire({
         icon: 'warning',
@@ -62,7 +78,6 @@ export class TaskListComponent implements OnInit {
       return false;
     }
 
-    // Validación de longitud mínima del título
     if (this.newTask.title.length < 3) {
       Swal.fire({
         icon: 'warning',
@@ -74,7 +89,6 @@ export class TaskListComponent implements OnInit {
       return false;
     }
 
-    // Validación de la descripción
     if (!this.newTask.description || this.newTask.description.trim() === '') {
       Swal.fire({
         icon: 'warning',
@@ -89,17 +103,12 @@ export class TaskListComponent implements OnInit {
     return true;
   }
 
-  /**
-   * Maneja el envío del formulario
-   * Crea nueva tarea o actualiza existente
-   */
   onSubmit() {
-    // Validación inicial del formulario
+    // [código existente sin cambios]
     if (!this.validateForm()) {
       return;
     }
 
-    // Lógica para actualizar tarea existente
     if (this.editMode && this.editingId) {
       Swal.fire({
         title: '¿Actualizar tarea?',
@@ -118,10 +127,8 @@ export class TaskListComponent implements OnInit {
         }
       }).then((result) => {
         if (result.isConfirmed) {
-          // Llamada al servicio para actualizar
           this.taskService.updateTask(this.editingId, this.newTask).subscribe({
             next: () => {
-              // Notificación de éxito
               Swal.fire({
                 toast: true,
                 position: 'top-end',
@@ -135,7 +142,6 @@ export class TaskListComponent implements OnInit {
               this.cancelEdit();
             },
             error: (error) => {
-              // Manejo de error
               console.error('Error updating task:', error);
               Swal.fire({
                 icon: 'error',
@@ -150,10 +156,8 @@ export class TaskListComponent implements OnInit {
         }
       });
     } else {
-      // Lógica para crear nueva tarea
       this.taskService.createTask(this.newTask).subscribe({
         next: () => {
-          // Notificación de éxito
           Swal.fire({
             toast: true,
             position: 'top-end',
@@ -167,7 +171,6 @@ export class TaskListComponent implements OnInit {
           this.resetForm();
         },
         error: (error) => {
-          // Manejo de error
           console.error('Error creating task:', error);
           Swal.fire({
             icon: 'error',
@@ -182,29 +185,19 @@ export class TaskListComponent implements OnInit {
     }
   }
 
-  /**
-   * Activa el modo edición para una tarea
-   * @param task Tarea a editar
-   */
+  // Métodos sin cambios
   editTask(task: Task) {
     this.editMode = true;
     this.editingId = task.id || 0;
-    this.newTask = { ...task }; // Copia la tarea para edición
+    this.newTask = { ...task };
   }
 
-  /**
-   * Cancela el modo edición
-   * Limpia el formulario
-   */
   cancelEdit() {
     this.editMode = false;
     this.editingId = 0;
     this.resetForm();
   }
 
-  /**
-   * Reinicia el formulario a valores por defecto
-   */
   resetForm() {
     this.newTask = {
       id: 0,
@@ -214,12 +207,8 @@ export class TaskListComponent implements OnInit {
     };
   }
 
-  /**
-   * Elimina una tarea
-   * @param id ID de la tarea a eliminar
-   */
   deleteTask(id: number) {
-    // Confirmación de eliminación
+    // [código existente sin cambios]
     Swal.fire({
       title: '¿Eliminar tarea?',
       text: '¿Está seguro?',
@@ -234,10 +223,8 @@ export class TaskListComponent implements OnInit {
       timerProgressBar: true
     }).then((result) => {
       if (result.isConfirmed) {
-        // Llamada al servicio para eliminar
         this.taskService.deleteTask(id).subscribe({
           next: () => {
-            // Notificación de éxito
             Swal.fire({
               toast: true,
               position: 'top-end',
@@ -246,12 +233,10 @@ export class TaskListComponent implements OnInit {
               showConfirmButton: false,
               timer: 3000,
               width: '300px',
-
             });
             this.loadTasks(false);
           },
           error: (error) => {
-            // Manejo de error
             console.error('Error deleting task:', error);
             Swal.fire({
               icon: 'error',
@@ -267,16 +252,11 @@ export class TaskListComponent implements OnInit {
     });
   }
 
-  /**
-   * Cambia el estado de una tarea (completada/pendiente)
-   * @param task Tarea a modificar
-   */
   toggleStatus(task: Task) {
+    // [código existente sin cambios]
     if (task.id) {
-      // Llamada al servicio para actualizar estado
       this.taskService.updateStatus(task.id, !task.isComplete).subscribe({
         next: () => {
-          // Notificación de éxito
           Swal.fire({
             toast: true,
             position: 'top-end',
@@ -289,7 +269,6 @@ export class TaskListComponent implements OnInit {
           this.loadTasks(false);
         },
         error: (error) => {
-          // Manejo de error
           console.error('Error updating status:', error);
           Swal.fire({
             icon: 'error',
@@ -304,17 +283,14 @@ export class TaskListComponent implements OnInit {
     }
   }
 
-  /**
-   * Carga la lista de tareas desde el servidor
-   * @param showMessage Indica si se debe mostrar mensaje de carga
-   */
+  // Método actualizado para usar paginación
   private loadTasks(showMessage: boolean = false) {
-    // Llamada al servicio para obtener tareas
-    this.taskService.getTasks().subscribe({
-      next: (tasks) => {
-        this.tasks = tasks;
+    this.taskService.getTasks({ pageNumber: this.currentPage, pageSize: this.pageSize }).subscribe({
+      next: (response) => {
+        this.tasks = response.items;
+        this.paginationInfo = response;
+        
         if (showMessage) {
-          // Notificación de carga exitosa
           Swal.fire({
             toast: true,
             position: 'top-end',
@@ -330,7 +306,6 @@ export class TaskListComponent implements OnInit {
         }
       },
       error: (error) => {
-        // Manejo de error
         console.error('Error loading tasks:', error);
         Swal.fire({
           icon: 'error',
